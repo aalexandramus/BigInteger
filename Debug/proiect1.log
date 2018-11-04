@@ -1,0 +1,4 @@
+﻿  BigInt.cpp
+c:\users\alli\source\repos\proiect1\proiect1\bigint.cpp(709): warning C4018: '<': signed/unsigned mismatch
+c:\users\alli\source\repos\proiect1\proiect1\bigint.cpp(718): warning C4018: '<': signed/unsigned mismatch
+  proiect1.vcxproj -> C:\Users\Alli\source\repos\proiect1\Debug\proiect1.exe
