@@ -21,69 +21,69 @@ public:
 	char getSign() const;
 	unsigned char getBase() const;
 
-	BigInt &operator+= (int number);  //amin
-	BigInt &operator+= (const BigInt &second); //amin
+	BigInt &operator+= (int number);  
+	BigInt &operator+= (const BigInt &second); 
 
-	BigInt &operator-= (int number);//amin
-	BigInt &operator-= (const BigInt &second); //amin
+	BigInt &operator-= (int number);
+	BigInt &operator-= (const BigInt &second); 
 	
-	BigInt &operator*= (int number);
-	BigInt &operator*= (const BigInt &second);
+	BigInt &operator*= (int number); 
+	BigInt &operator*= (const BigInt &second);  
 
 	BigInt &operator/= (int number);
-	BigInt &operator/= (const  BigInt &second);  //fereask
+	BigInt &operator/= (const  BigInt &second);  
 	
 	BigInt &operator %=(int number);
-	BigInt &operator %=(const BigInt &second);
+	BigInt &operator %=(const BigInt &second); 
 	
-	friend BigInt operator+ (const BigInt &digits); //amin
-	friend BigInt operator- (const BigInt &digits);//amin
+	friend BigInt operator+ (const BigInt &digits); 
+	friend BigInt operator- (const BigInt &digits);
 
-	friend BigInt operator+ (const BigInt &digits1, const BigInt &digits2);//amin
-	friend BigInt operator+ (const BigInt &digits, int number);//amin
-	friend BigInt operator+ (int number, const BigInt &digits);//amin
+	friend BigInt operator+ (const BigInt &digits1, const BigInt &digits2);
+	friend BigInt operator+ (const BigInt &digits, int number);
+	friend BigInt operator+ (int number, const BigInt &digits);
 
-	friend BigInt operator- (const BigInt &digits1, const BigInt &digits2);//amin
-	friend BigInt operator- (const BigInt &digits, int number);//amin
-	friend BigInt operator- (int number, const BigInt &digits);//amin
+	friend BigInt operator- (const BigInt &digits1, const BigInt &digits2);
+	friend BigInt operator- (const BigInt &digits, int number);
+	friend BigInt operator- (int number, const BigInt &digits);
 
-	friend BigInt operator* (const BigInt &digits1, const BigInt &digits2);//amin
-	friend BigInt operator* (const BigInt &digits, int number);//amin
-	friend BigInt operator* (int number, const BigInt &digits);//amin
+	friend BigInt operator* (const BigInt &digits1, const BigInt &digits2);
+	friend BigInt operator* (const BigInt &digits, int number);
+	friend BigInt operator* (int number, const BigInt &digits);
 
 	friend BigInt operator %(const BigInt &digits1, const BigInt &digits2);
 	friend BigInt operator% (const BigInt &digits, int number);
-	friend BigInt operator% (int number, const BigInt &digits);
+	friend BigInt operator% (int number, const BigInt &digits);  
 
-	friend BigInt operator/ (const BigInt &digits1, const BigInt &digits2);//amin
-	friend BigInt operator/ (const BigInt &digits, int number);//amin
-	friend BigInt operator/ (int number, const BigInt &digits);//amin
+	friend BigInt operator/ (const BigInt &digits1, const BigInt &digits2);
+	friend BigInt operator/ (const BigInt &digits, int number);
+	friend BigInt operator/ (int number, const BigInt &digits);
 
-	friend BigInt operator^ (const BigInt &base, int exponent);//amin
+	friend BigInt operator^ (const BigInt &base, int exponent);
 
-	friend bool operator== (const BigInt &digits1,const BigInt &digits2);//amin
-	friend bool operator== (const BigInt &digits, int number);//amin
-	friend bool operator== (int number, const BigInt &digits);//amin
+	friend bool operator== (const BigInt &digits1,const BigInt &digits2);
+	friend bool operator== (const BigInt &digits, int number);
+	friend bool operator== (int number, const BigInt &digits);
 
-	friend bool operator!= (const BigInt &digits1, const BigInt &digits2);//amin
-	friend bool operator!= (const BigInt &digits, int number);//amin
-	friend bool operator!= (int number, const BigInt &digits);//amin
+	friend bool operator!= (const BigInt &digits1, const BigInt &digits2);
+	friend bool operator!= (const BigInt &digits, int number);
+	friend bool operator!= (int number, const BigInt &digits);
 
-	friend bool operator< (const BigInt &digits1, const BigInt &digits2);//amin
-	friend bool operator< (const BigInt &digits, int number);//amin
-	friend bool operator< (int number, const BigInt &digits);//amin
+	friend bool operator< (const BigInt &digits1, const BigInt &digits2);
+	friend bool operator< (const BigInt &digits, int number);
+	friend bool operator< (int number, const BigInt &digits);
 
-	friend bool operator<= (const BigInt &digits1, const BigInt &digits2);//amin
-	friend bool operator<= (const BigInt &digits, int number);//amin
-	friend bool operator<= (int number, const BigInt &digits);//amin
+	friend bool operator<= (const BigInt &digits1, const BigInt &digits2);
+	friend bool operator<= (const BigInt &digits, int number);
+	friend bool operator<= (int number, const BigInt &digits);
 
-	friend bool operator> (const BigInt &digits1, const BigInt &digits2);//amin
-	friend bool operator> (const BigInt &digits, int number);//amin
-	friend bool operator> (int number, const BigInt &digits);//amin
+	friend bool operator> (const BigInt &digits1, const BigInt &digits2);
+	friend bool operator> (const BigInt &digits, int number);
+	friend bool operator> (int number, const BigInt &digits);
 
-	friend bool operator>= (const BigInt &digits1, const BigInt &digits2);//amin
-	friend bool operator>= (const BigInt &digits, int number);  //amin
-	friend bool operator>= (int number, const BigInt &digits); //amin
+	friend bool operator>= (const BigInt &digits1, const BigInt &digits2);
+	friend bool operator>= (const BigInt &digits, int number);  
+	friend bool operator>= (int number, const BigInt &digits); 
 
 
 private:

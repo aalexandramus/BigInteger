@@ -239,72 +239,79 @@ BigInt & BigInt::operator-=(const BigInt & second)
 
 BigInt & BigInt::operator*=(int number)
 {
-	int carry = 0, k, numDigits = 0, copyNumber = number;// product == product of num and one digit + carry
-	int product;
-	while (copyNumber != 0)
+	BigInt temp;
+	temp.m_digits.clear();
+	if (number >= 0)
+		temp.m_sign = '+';
+	else temp.m_sign = '-';
+	if (number == 0) temp.m_digits.push_back(0);
+	if (number < 0) number = std::abs(number);
+	while (number != 0)
 	{
-		numDigits++;
-		copyNumber /= 10;
+		temp.m_digits.push_back((number % 10) );
+		number = number / 10;
 	}
-
-	int length = numDigits;
-
-	if (0 == number)              // treat zero as special case and stop
-	{
-		*this = 0;
-		return *this;
-	}
-
-	if (m_base < number || number < 0)        // handle pre-condition failure
-	{
-		*this *= BigInt(number);
-		return *this;
-	}
-	
-	if (1 == number)              // treat one as special case, no work
-	{
-		return *this;
-	}
-
-	for (k = 0; k < length; k++)     // once for each digit
-	{
-		product = number * (m_digits.at(k)) + carry;
-		carry = product / m_base;
-		m_digits.at(k) = product % m_base;
-	}
-
-	while (carry != 0)         // carry all digits
-	{
-		m_digits.at(m_digits.size()) =  carry % m_base;
-		
-		carry /= m_base;
-	}
+	*this *= temp;
 	return *this;
 }
 
 BigInt & BigInt::operator*=(const BigInt & second)
 {
 
-	if (m_sign != second.m_sign)
-	{
-		m_sign = '-';
-	}
-	else
-	{
+	if (m_sign == second.m_sign)
 		m_sign = '+';
-	}
+	else m_sign = '-';
+	int n1 = m_digits.size();
+	int n2 = second.m_digits.size();
+	std::vector<int> result(n1 + n2, 0);
 
-	BigInt first(*this);                        // copia lui this
-	BigInt sum;                             
-	int k;
-	int length = second.m_digits.size();                 
+	// pozitiile
+	int i_n1 = 0;
+	int i_n2 = 0;
 
-	for (k = 0; k < length; k++)
+	
+	for (int i = 0; i < n1; i++)
 	{
-		sum += first * second.m_digits.at(k);          // inmultire cu cifra k
-		first *= 10;                           // adauga un 0
+		int carry = 0;
+		int n1 = m_digits.at(i) ;
+
+		// To shift position to left after every
+		// multiplication of a digit in num2
+		i_n2 = 0;
+
+		// Go from right to left in num2
+		for (int j = 0; j < n2; j++)
+		{
+			int n2 = second.m_digits.at(j) ;
+			int sum = n1 * n2 + result.at(i_n1 + i_n2) + carry;
+			carry = sum / 10;
+			result.at(i_n1 + i_n2) = sum % 10;
+			i_n2++;
+		}
+		if (carry > 0)
+			result.at(i_n1 + i_n2) += carry;
+		i_n1++;
 	}
-	*this = sum;
+	int i = result.size() - 1;
+	while (i >= 0 && result.at(i) == 0)
+		i--;
+	if (i == -1)
+	{
+		m_digits.clear();
+		m_digits.push_back(0);
+		return *this;
+	}
+
+	m_digits.clear();
+	for (unsigned int i = 0; i < result.size(); i++)
+		m_digits.push_back(result.at(i) );
+	while (m_digits.size() > 1)
+	{
+		if (m_digits[m_digits.size() - 1] == 0)
+			m_digits.pop_back();
+		else
+			break;
+	}
 	return *this;
 }
 
@@ -351,6 +358,8 @@ BigInt & BigInt::operator/=(int number)
 		m_digits.push_back(result.at(i));
 	return *this;
 }
+
+
 
 bool operator==(const BigInt &first, const BigInt &second)
 {
@@ -689,18 +698,31 @@ BigInt operator-(int number, const BigInt & digits)
 	result -= number;
 	return result;
 }
-/*
+
 BigInt operator*(const BigInt & digits1, const BigInt & digits2)
 {
 	BigInt result(digits1);
 	result *= digits2;
 	return result;
 }
-*/
+
 BigInt operator*(const BigInt & digits, int number)
 {
 	BigInt result(digits);
 	result *= number;
+	return result;
+}
+BigInt operator*(int number, const BigInt & digits)
+{
+	BigInt result(number);
+	result *= digits;
+	return result;
+}
+BigInt operator%(const BigInt & digits1, const BigInt & digits2)
+{
+	BigInt q = digits1 / digits2;
+	BigInt x = q + digits2;
+	BigInt result = digits1 - digits2;
 	return result;
 }
 BigInt operator%(const BigInt & digits, int number)
@@ -720,14 +742,9 @@ BigInt operator%(int number, const BigInt & digits)
 
 	return res;
 }
-/*
-BigInt operator*(int number, const BigInt & digits)
-{
-	BigInt result(number);
-	result *= digits;
-	return result;
-}
 
+
+/*
 BigInt operator/(const BigInt & digits1, const BigInt & digits2)
 {
 	BigInt result(digits1);
