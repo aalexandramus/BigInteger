@@ -120,6 +120,7 @@ BigInt min(const BigInt& first, const BigInt& second)
 	return second;
 }
 
+
 BigInt & BigInt::operator+=(int number)
 {
 
@@ -319,43 +320,152 @@ BigInt & BigInt::operator/=(int number)
 {
 	if (number == 0)
 		throw std::runtime_error("Impartire la 0.");
-	int divisor = number;
-	BigInt numberAsBigInt;
-	numberAsBigInt.m_digits.clear();
-	if (number > 0)
-		numberAsBigInt.m_sign = '+';
-	else numberAsBigInt.m_sign = '-';
-	if (number < 0) number = std::abs(number);
-	while (number != 0)
-	{
-		numberAsBigInt.m_digits.push_back((number % 10) + '0');
-		number = number / 10;
-	}
-	if (numberAsBigInt > *this)
+
+	if (*this < number)
 	{
 		m_digits.clear();
-		m_digits.push_back('0');
+		m_digits.push_back(0);
 		return *this;
 	}
 
-	if (m_sign == numberAsBigInt.m_sign)
+	char number_sign = '+';
+	if (number < 0) number_sign = '-';
+	if (m_sign == number_sign) m_sign = '+';
+	else m_sign = '-';
+	int divisor = std::abs(number);
+
+
+	std::vector<unsigned char> result;
+	unsigned int idx = m_digits.size() - 1;
+	int aux = m_digits.at(idx) ;
+	while (aux < divisor)
+		aux = aux * 10 + (m_digits.at(--idx));
+
+	while (m_digits.size() > idx)
+	{
+		result.push_back((aux / divisor));
+		aux = (aux % divisor) * 10 + m_digits.at(--idx);
+	}
+	m_digits.clear();
+	std::reverse(result.begin(), result.end());
+	m_digits = result;
+	return *this;
+
+
+}
+
+BigInt & BigInt::operator/=(const BigInt & second)
+{
+	if (second == 0)
+		throw std::runtime_error("Impartire la 0");
+
+	if (*this < second)
+	{
+		m_digits.clear();
+		m_digits.push_back(0);
+		return *this;
+	}
+
+	if (m_sign == second.m_sign)
 		m_sign = '+';
 	else m_sign = '-';
 
-	std::vector<int> result;
-	unsigned int idx = m_digits.size() - 1;
-	int temp = m_digits.at(idx);
-	while (temp < divisor)
-		temp = temp * 10 + (m_digits.at(--idx));
-	while (m_digits.size() > idx)
-	{
-		result.push_back((temp / divisor));
-		temp = (temp % divisor) * 10 + m_digits.at(--idx);
-	}
+	BigInt result, auxiliar;
+	result.m_digits.clear();
+	result.m_sign = m_sign;
+	auxiliar.m_digits.clear();
 
+	int idx = m_digits.size() - 1;
+	auxiliar.m_digits.push_back(m_digits.at(idx));
+	while (auxiliar < second && idx > 0)
+	{
+		idx--;
+		auxiliar.m_digits.push_back(m_digits.at(idx));
+	}
+	std::reverse(auxiliar.m_digits.begin(), auxiliar.m_digits.end());
+
+	int quotient;
+	BigInt remainder;
+	while (idx >= 0)
+	{
+		idx--;
+		for (int i = 0; i <= 9; i++)
+		{
+			BigInt x = second * i;
+			if (x == auxiliar)
+			{
+				quotient = i;
+				break;
+			}
+			if(x>auxiliar)
+			{
+				quotient = i - 1;
+				break;
+			}
+		}
+
+		result.m_digits.push_back(quotient);
+		if (idx == -1) break;
+		remainder = auxiliar - (second*quotient);
+		for (int i = remainder.m_digits.size() - 1; i > 0; i--)
+		{ 
+			if(remainder.m_digits.at(i)==0)
+			remainder.m_digits.pop_back();
+			else break;
+		}
+		if (remainder == 0)
+		{
+			auxiliar.m_digits.clear();
+			auxiliar.m_digits.push_back(m_digits.at(idx));
+		}
+		if (remainder != 0)
+		{
+			remainder *= 10;
+			auxiliar = remainder + (m_digits.at(idx));
+		}
+	}
+	std::reverse(result.m_digits.begin(), result.m_digits.end());
+	*this = result;
+	while (m_digits.size() > 1)
+	{
+		if (m_digits[m_digits.size() - 1] == 0)
+			m_digits.pop_back();
+		else
+			break;
+	}
+	return *this;
+}
+
+BigInt & BigInt::operator%=(int number)
+{
+	
+	if (number == 0)
+		throw std::runtime_error("Impartire la 0");
+	if (number < 0)
+		number = std::abs(number);
+	int res = 0;
+	for ( auto i = m_digits.rbegin(); i != m_digits.rend(); ++i)
+		res = (res * 10 + (*i))&number;
 	m_digits.clear();
-	for (unsigned int i = 0; i < result.size(); i++)
-		m_digits.push_back(result.at(i));
+	if(res==0)
+	{
+		m_digits.push_back(0);
+		return *this;
+	}
+	while(res!=0)
+	{
+		m_digits.push_back(res % 10);
+		res /= 10;
+	}
+	return *this;
+}
+
+BigInt & BigInt::operator%=(const BigInt & second)
+{
+
+	BigInt quotient = *this / second;
+	BigInt x = quotient * second;
+	*this = *this - x;
 	return *this;
 }
 
@@ -728,7 +838,7 @@ BigInt operator%(const BigInt & digits1, const BigInt & digits2)
 BigInt operator%(const BigInt & digits, int number)
 {
 	int res = 0;
-	for (int i = 0; i < digits.m_digits.size(); i++)
+	for (unsigned int i = 0; i < digits.m_digits.size(); i++)
 		res = (res * 10 + digits.m_digits.at(i)) / number;
 
 	return res;
@@ -737,14 +847,14 @@ BigInt operator%(const BigInt & digits, int number)
 BigInt operator%(int number, const BigInt & digits)
 {
 	int res = 0;
-	for (int i = 0; i < digits.m_digits.size(); i++)
+	for (unsigned int i = 0; i < digits.m_digits.size(); i++)
 		res = (res * 10 + digits.m_digits.at(i)) / number;
 
 	return res;
 }
 
 
-/*
+
 BigInt operator/(const BigInt & digits1, const BigInt & digits2)
 {
 	BigInt result(digits1);
@@ -775,8 +885,8 @@ BigInt operator^(const BigInt & base, int exponent)
 		return result;
 	}
 
-	for (i = 0; i < exponent; i++)
+	for (int i = 0; i < exponent; i++)
 		result *= base;
 	return result;
 }
-*/
+
